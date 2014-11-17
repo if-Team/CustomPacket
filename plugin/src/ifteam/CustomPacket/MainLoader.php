@@ -6,7 +6,7 @@ use pocketmine\plugin\PluginBase;
 use pocketmine\utils\Config;
 use pocketmine\event\Listener;
 
-class CustomPacket extends PluginBase implements Listener {
+class MainLoader extends PluginBase implements Listener {
 
     /** @var CustomSocket */
     private $socket;

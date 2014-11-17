@@ -45,10 +45,10 @@ class CustomSocket extends \Thread {
      */
     public function receivePacket($data, $ip, $port) {
         if(is_numeric($data)){
-            $event = new ReceivePacketEvent($this, $data, $ip, $port);
+            $event = new ReceivePacketEvent($data, $ip, $port);
             $this->getServer()->getPluginManager()->callEvent($event);
         }else{
-            $event = new ReceiveJSONPacketEvent($this, JSON_Decode($data), $ip, $port);
+            $event = new ReceiveJSONPacketEvent(JSON_Decode($data), $ip, $port);
             $this->getServer()->getPluginManager()->callEvent($event);
         }
     }
@@ -63,7 +63,7 @@ class CustomSocket extends \Thread {
      */
     public static function sendPacket($packet, $ip, $port) {
         if(is_numeric($packet)){
-            $event = new SendPacketEvent($this, $packet, $ip, $port);
+            $event = new SendPacketEvent($packet, $ip, $port);
             $this->getServer ()->getPluginManager ()->callEvent ($event);
             if(!$event->isCancelled()){
                 $packet = $event->getPacket();
