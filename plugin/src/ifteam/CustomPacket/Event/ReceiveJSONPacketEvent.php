@@ -3,7 +3,7 @@
 namespace ifteam\CustomPacket\event;
 
 class ReceiveJSONPacketEvent extends ReceivePacketEvent {
-	public function __construct(PluginBase $plugin, $packet, $ip, $port) {
+	public function __construct(CustomSocket $plugin, $packet, $ip, $port) {
 		parent::__construct ( $plugin, $packet, $ip, $port );
 	}
 }

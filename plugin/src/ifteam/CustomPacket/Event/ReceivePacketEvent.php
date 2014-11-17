@@ -5,7 +5,7 @@ namespace ifteam\CustomPacket\event;
 use pocketmine\plugin\PluginBase;
 
 class ReceivePacketEvent extends CustomPacketEvent{
-	public function __construct(PluginBase $plugin, $packet, $ip, $port) {
+	public function __construct(CustomSocket $plugin, $packet, $ip, $port) {
 		parent::__construct ( $plugin, $packet, $ip, $port );
 	}
     public function getPacket() {

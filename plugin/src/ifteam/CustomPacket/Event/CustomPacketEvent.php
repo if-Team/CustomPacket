@@ -9,7 +9,7 @@ class CustomPacketEvent extends PluginEvent{
     protected $plugin, $packet, $ip, $port;
     public static $handlerList = null;
     
-    public function __construct(PluginBase $plugin, $packet, $ip, $port) {
+    public function __construct(CustomSocket $plugin, $packet, $ip, $port) {
         $this->plugin = $plugin;
         $this->packet = $packet;
         $this->ip = $ip;

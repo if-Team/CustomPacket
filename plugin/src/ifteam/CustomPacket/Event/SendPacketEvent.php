@@ -5,7 +5,7 @@ namespace ifteam\CustomPacket\event;
 use pocketmine\event\Cancellable;
 
 class SendPacketEvent extends CustomPacketEvent implements Cancellable{
-	public function __construct(PluginBase $plugin, $packet, $ip, $port) {
+	public function __construct(CustomSocket $plugin, $packet, $ip, $port) {
 		parent::__construct ( $plugin, $packet, $ip, $port );
 	}
 	

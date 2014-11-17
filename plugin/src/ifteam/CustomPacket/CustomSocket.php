@@ -2,48 +2,81 @@
 
 namespace ifteam\CustomPacket;
 
-use pocketmine\utils\Binary;
-use pocketmine\plugin\PluginBase;
+use raklib\server\UDPServerSocket;
+use pocketmine\Server;
+use ifteam\CustomPacket\event\ReceiveJSONPacketEvent;
+use ifteam\CustomPacket\event\SendJSONPacketEvent;
+use ifteam\CustomPacket\event\ReceivePacketEvent;
+use ifteam\CustomPacket\event\SendPacketEvent;
 
 class CustomSocket extends \Thread {
-	
 	/** @var CustomPacket */
-	public $plugin = null;
 	public $stop = false;
 	public $socket = null;
-	public function __construct(PluginBase $plugin, $interface, $port) {
-		$this->plugin = $plugin;
-		$this->socket = socket_create ( AF_INET, SOCK_DGRAM, SOL_UDP );
-		if (@socket_bind ( $this->socket, $interface, $port ) === true) {
-			socket_set_option ( $this->socket, SOL_SOCKET, SO_REUSEADDR, 0 );
-			@socket_set_option ( $this->socket, SOL_SOCKET, SO_RCVBUF, 1500 );
-			@socket_set_option ( $this->socket, SOL_SOCKET, SO_SNDBUF, 1024 * 1024 * 2 );
-		} else {
-			$plugin->getLogger ()->critical ( "FAILED TO BIND TO " . $interface . ":" . $port . "!", true, true, 0 );
-			$plugin->getServer ()->shutdown ();
-		}
-		socket_set_nonblock ( $this->socket );
+	/**
+	 * @param $port
+	 * @param $interface
+	 */
+	public function __construct($port) {
+		$this->socket = new UDPServerSocket(Server::getInstance()->getLogger(), $port);
 		$this->start ();
 	}
 	public function close() {
 		$this->stop = true;
-		socket_close ( $this->socket );
+		$this->socket->close();
 	}
 	public function run() {
 		while ( $this->stop !== true ) {
 			$data = $ip = $port = null;
-			//if (@socket_recvfrom ( $this->socket, $data, 128, 0, $ip, $port ) > 0) {
-			if (@socket_recvfrom ( $this->socket, $data, 128, 0, $ip, $port ) == 0) {//TESTCODE
-				$data = "14141";//TESTCODE
-				$ip = "192.168.1.1";//TESTCODE
-				$port = 65333;//TESTCODE
-				$api = CustomPacket::getInstance ();
-				$api->receivePacket ( $this->plugin, $data, $ip, $port );
-				break;
-			}
+			if( $this->socket->readPacket ( $data, $ip, $port ) > 0)
+				$this->receivePacket($data, $ip, $port);
 		}
 		unset ( $this->socket, $this->stop );
 		exit ( 0 );
 	}
+    /**
+     * ReceivePacket and callEvent ReceivePacketEvent
+     * or ReceiveJSONPacketEvent (is_numeric check)
+     *
+     * @param int|string $data            
+     * @param int $ip            
+     * @param int $port            
+     *
+     */
+    public function receivePacket($data, $ip, $port) {
+        if(is_numeric($data)){
+            $event = new ReceivePacketEvent($this, $data, $ip, $port);
+            $this->getServer()->getPluginManager()->callEvent($event);
+        }else{
+            $event = new ReceiveJSONPacketEvent($this, JSON_Decode($data), $ip, $port);
+            $this->getServer()->getPluginManager()->callEvent($event);
+        }
+    }
+    /**
+     * SendPacket and callEvent SendPacketEvent
+     * or SendJSONPacketEvent (is_numeric check)
+     *
+     * @param int|string $packet
+     * @param string $ip            
+     * @param int $port            
+     *
+     */
+    public static function sendPacket($packet, $ip, $port) {
+        if(is_numeric($packet)){
+            $event = new SendPacketEvent($this, $packet, $ip, $port);
+            $this->getServer ()->getPluginManager ()->callEvent ($event);
+            if(!$event->isCancelled()){
+                $packet = $event->getPacket();
+                $this->socket->writePacket($packet, $ip, $port);
+            }
+        }else{
+            $event = new SendJSONPacketEvent($this, $packet, $ip, $port);
+            $this->getServer()->getPluginManager()->callEvent($event);
+            if(!$event->isCancelled()){
+                $packet = JSON_Encode($event->getPacket());
+                $this->socket->writePacket($packet, $ip, $port);
+            }
+        }
+    }
 }
 ?>
