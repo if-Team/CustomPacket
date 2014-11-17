@@ -1,0 +1,5 @@
+name: CustomPacket
+main: ifteam\CustomPacket\CustomPacket
+author: ifteam
+version: 1.0-alpha
+api: [1.4.1]
