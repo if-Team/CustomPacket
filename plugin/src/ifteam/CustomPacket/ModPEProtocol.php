@@ -85,6 +85,19 @@ interface ModPEProtocol {
 	const GET_LEVEL = 0xa6;
 	const GET_TILE = 0xa7;
 	const PREVENT_DEFAULT = 0xa8;
+	
+	// SYSTEM SIGNALS
+	const SIGNAL_HANDSHAKE = 0xb0;
+	const SIGNAL_LOGIN = 0xb2;
+	const SIGNAL_LOGOUT = 0xb3;
+	const SIGNAL_PING = 0xb4;
+	const SIGNAL_PONG = 0xb5;
+	
+	//0xc0 ~ 0xef: Reserved
+	
+	// Unknown (or raw) Packet.
+	const PACKET_RAW = 0xf0;
+	const PACKET_RAW_ENCODED = 0xf1;
 }
 
 ?>
