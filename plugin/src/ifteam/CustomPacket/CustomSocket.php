@@ -42,8 +42,8 @@ class CustomSocket extends \Thread {
 					               
 				// @TODO : http://stackoverflow.com/questions/9824714/shared-resources-between-php-children-threads
 				// @TODO : http://php.net/manual/en/book.sem.php
-				$id = msg_get_queue ( 12340 );
-				msg_send ( $id, 8, "$data-$ip-$port", false, false, $err );
+				//$id = msg_get_queue ( 12340 );
+				//msg_send ( $id, 8, "$data-$ip-$port", false, false, $err );
 				break;
 			}
 		}
