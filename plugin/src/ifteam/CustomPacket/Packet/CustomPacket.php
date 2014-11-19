@@ -13,7 +13,7 @@ class CustomPacket{
 		$json = json_decode($decoded[1], true);
 		if($json === false){
 			$pk = new CustomJSONPacket($json);
-		} else if(decoded[0] === Protocol::PACKET_RAW_BASE64){
+		} else if($decoded[0] === Protocol::PACKET_RAW_BASE64){
 			$pk = new CustomEncodedPacket($decoded[1]);
 		} else {
 			$pk = new CustomRawPacket($decoded[1]);
