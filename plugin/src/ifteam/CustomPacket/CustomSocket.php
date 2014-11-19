@@ -29,11 +29,12 @@ class CustomSocket extends \Thread {
 			$plugin->getServer ()->shutdown ();
 		}
 		socket_set_nonblock ( $this->socket );
+		$plugin->getServer()->getLogger()->info("[CustomPacket] Socket bind complete. Starting socket thread...");
 		$this->start ();
 	}
 	public function close() {
 		$this->stop = true;
-		$this->sendPacket(Protocol::SIGNAL_NOTHING, '127.0.0.1', 19131)
+		$this->sendPacket(Protocol::SIGNAL_NOTHING, '127.0.0.1', 19131);
 		socket_close ( $this->socket );
 	}
 	public function run() {
@@ -62,7 +63,7 @@ class CustomSocket extends \Thread {
 		return @socket_sendto($this->socket, $buffer, strlen($buffer), 0, $address, $port);
 	}
 	public function recvPacket(&$buffer, &$address, &$port){
-		return @socket_recvfrom($this->socket, $buffer, , 1024*1024, 0, $address, $port)
+		return @socket_recvfrom($this->socket, $buffer, @socket_get_option($this->socket, SOL_SOCKET, SO_RCVBUF), 0, $address, $port);
 	}
 }
 ?>

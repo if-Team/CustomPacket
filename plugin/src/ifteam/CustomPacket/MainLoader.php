@@ -6,8 +6,6 @@ use pocketmine\plugin\PluginBase;
 use pocketmine\utils\Config;
 use pocketmine\event\Listener;
 use pocketmine\Server;
-use ifteam\CustomPacket\event\ReceiveJSONPacketEvent;
-use ifteam\CustomPacket\event\SendJSONPacketEvent;
 use ifteam\CustomPacket\event\ReceivePacketEvent;
 use ifteam\CustomPacket\event\SendPacketEvent;
 use pocketmine\scheduler\CallbackTask;
