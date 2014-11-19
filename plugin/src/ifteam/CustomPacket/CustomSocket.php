@@ -5,6 +5,7 @@ namespace ifteam\CustomPacket;
 use pocketmine\Server;
 use ifteam\CustomPacket\ModPEProtocol as Protocol;
 use ifteam\CustomPacket\Event\ReceivePacketEvent;
+use ifteam\CustomPacket\Packet\CustomPacket;
 
 class CustomSocket extends \Thread {
 	/** @var CustomPacket */
@@ -44,7 +45,7 @@ class CustomSocket extends \Thread {
 				$ip = "192.168.1.1"; // TESTCODE
 				//$port = 65333; // TESTCODE
 				
-				$this->plugin->getServer()->getPluginManager()->callEvent(new ReceivePacketEvent(new Packet($data), $ip, $port));
+				$this->plugin->getServer()->getPluginManager()->callEvent(new ReceivePacketEvent(new CustomPacket($data), $ip, $port));
 				
 				// @TODO : http://stackoverflow.com/questions/9824714/shared-resources-between-php-children-threads
 				// @TODO : http://php.net/manual/en/book.sem.php

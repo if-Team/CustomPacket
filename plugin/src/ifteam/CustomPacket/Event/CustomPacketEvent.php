@@ -19,7 +19,7 @@ class CustomPacketEvent extends Event{
         return $this->packet;
     }
     
-    public function getIp() {
+    public function getI() {
         return $this->ip;
     }
     

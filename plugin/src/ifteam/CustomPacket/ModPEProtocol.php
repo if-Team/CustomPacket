@@ -96,9 +96,10 @@ interface ModPEProtocol {
 	
 	//0xc0 ~ 0xef: Reserved
 	
-	// Unknown (or raw) Packet.
-	const PACKET_RAW = 0xf0;
-	const PACKET_RAW_ENCODED = 0xf1;
+	// Raw Packet
+	const PACKET_UNKNOWN = 0xf0;
+	const PACKET_RAW_STRING = 0xf1;
+	const PACKET_RAW_BASE64 = 0xf2;
 	
 	// Super secret code. Let's keep this secret.
 	const SIGNAL_WOW = 0xff;
