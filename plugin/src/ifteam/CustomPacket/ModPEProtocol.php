@@ -92,12 +92,16 @@ interface ModPEProtocol {
 	const SIGNAL_LOGOUT = 0xb3;
 	const SIGNAL_PING = 0xb4;
 	const SIGNAL_PONG = 0xb5;
+	const SIGNAL_NOTHING = 0xb6;
 	
 	//0xc0 ~ 0xef: Reserved
 	
 	// Unknown (or raw) Packet.
 	const PACKET_RAW = 0xf0;
 	const PACKET_RAW_ENCODED = 0xf1;
+	
+	// Super secret code. Let's keep this secret.
+	const SIGNAL_WOW = 0xff;
 }
 
 ?>
