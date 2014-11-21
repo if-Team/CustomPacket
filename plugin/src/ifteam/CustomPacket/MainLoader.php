@@ -15,7 +15,8 @@ class MainLoader extends PluginBase implements Listener {
     /** @var CustomSocket */
     private $socket;
     private $option;
-    
+    private $socketManager;
+	
 	public $stream = null;
     
     private static $instance = null;
@@ -23,24 +24,25 @@ class MainLoader extends PluginBase implements Listener {
     public function onEnable() {
     	if(self::$instance == null)
     		self::$instance = $this;
-        $option = [
+        $defaultOption = [
             "interface" => "0.0.0.0",
             "port" => 19131
         ];
-        $this->option = (new Config($this->getDataFolder() . "SocketOption.yml", Config::YAML, $option))->getAll();
-        $this->socket = new CustomSocket($this->getInstance(), $this->option["interface"], $this->option["port"]);
+        $this->option = (new Config($this->getDataFolder() . "SocketOption.yml", Config::YAML, $defaultOption))->getAll();
+        $this->socket = new CustomSocket($this->getLogger(), $this->option["interface"], $this->option["port"]);
+		$this->socketManager = new SocketManager($this->socket, $this);
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
     }
     public function onDisable(){
         $this->socket->close();
-        usleep(50000);
-        $this->socket->kill();
     }
     
     /** @return CustomPacket */
-    public static function getInstance(){
+    /*
+	public static function getInstance(){
     	return self::$instance;
     }
+	*/
    
     /** @return int */
     public function getDefaultPort() {

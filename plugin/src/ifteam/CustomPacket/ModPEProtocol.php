@@ -3,6 +3,10 @@
 namespace ifteam\CustomPacket;
 
 interface ModPEProtocol {
+
+	//PACKET VERSION
+	const PROTOCOL_VERSION = 0.1
+
 	// NORMAL PACKET
 	const SPAWN_MOB = 0x40;
 	const EXPLODE = 0x41;
