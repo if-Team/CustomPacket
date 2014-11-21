@@ -58,6 +58,9 @@ class CustomPacket{
 		
 		$logger->info("[CustomPacket] Start packet hexdump...");
 		$logger->info("");
+		$logger->info("Packet type: ". $this->getPacketID());
+		$logger->info("Packet length: ". strlen($this->rawdata));
+		$logger->info("");
 		$logger->info(str_repeat('=', 60));
 		$logger->info('|' .str_repeat(' ', 58) . '|');
 		foreach($lines as $l){
