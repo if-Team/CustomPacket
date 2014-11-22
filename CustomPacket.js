@@ -40,7 +40,7 @@ var CustomPacket = {
 	            var sentBytes = CustomPacket.channel.send(java.nio.ByteBuffer.wrap(new java.lang.String(message).getBytes()),
 	            		new java.net.InetSocketAddress(ip, port));
 	            
-	            CustomPacket.out("SENT SUCCESSFULLY - BYTES: " + sentBytes);
+	            CustomPacket.out("SENDING SUCCEEDED - TRANSFERRED " + sentBytes + " BYTES");
 	        }catch(e){
 	        	CustomPacket.out("SEND FAILED - " + e);
 				CustomPacket.out(e.name + " - line " + e.lineNumber + "\n" + e.stack);
