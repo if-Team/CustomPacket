@@ -1,6 +1,6 @@
 <?php
 
-namespace ifteam\CustomPacket\event;
+namespace ifteam\CustomPacket\Event;
 
 use pocketmine\plugin\PluginBase;
 use ifteam\CustomPacket\Packet\CustomPacket;

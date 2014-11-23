@@ -3,15 +3,16 @@
 namespace ifteam\CustomPacket;
 
 use pocketmine\Server;
+use pocketmine\Worker;
 use ifteam\CustomPacket\ModPEProtocol as Protocol;
 use ifteam\CustomPacket\Event\ReceivePacketEvent;
 use ifteam\CustomPacket\Packet\CustomPacket;
 
-class SocketManager extends \Thread {
+class SocketManager extends Worker {
 	/** @var SocketManager */
 	protected $stop = false;
 	protected $socket = null;
-	protected static $caller;
+	protected $caller;
 	/**
 	 * @param $socket
 	 * @param $caller
@@ -27,7 +28,8 @@ class SocketManager extends \Thread {
 		$this->socket->close();
 	}
 	public function run() {
-		while ($this->stop){
+		var_dump($this->socket);
+		while (1){
 			$data = $ip = $port = null;
 			// if (@socket_recvfrom ( $this->socket, $data, 128, 0, $ip, $port ) > 0) {
 			if ($this->socket->recvPacket($data, $ip, $port, true) !== false) { // TESTCODE
