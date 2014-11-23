@@ -16,34 +16,27 @@ class MainLoader extends PluginBase implements Listener {
     private $socket;
     private $option;
     private $socketManager;
-	
-	public $stream = null;
+    
+    public $stream = null;
     
     private static $instance = null;
     
     public function onEnable() {
-    	if(self::$instance == null)
-    		self::$instance = $this;
+        if(self::$instance == null)
+            self::$instance = $this;
         $defaultOption = [
             "interface" => "0.0.0.0",
             "port" => 19131
         ];
         $this->option = (new Config($this->getDataFolder() . "SocketOption.yml", Config::YAML, $defaultOption))->getAll();
         $this->socket = new CustomSocket($this->getLogger(), $this->option["interface"], $this->option["port"]);
-		$this->socketManager = new SocketManager($this->socket, $this);
-		$this->getServer()->getScheduler()->scheduleRepeatingTask(new CallbackTask(array($this->socketManager, 'listen')), $this->option["timeout"] * 20);
+        $this->socketManager = new SocketManager($this->socket, $this);
+        $this->getServer()->getScheduler()->scheduleRepeatingTask(new CallbackTask([$this->socketManager, 'listen']), 1);
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
     }
     public function onDisable(){
         $this->socket->close();
     }
-    
-    /** @return CustomPacket */
-    /*
-	public static function getInstance(){
-    	return self::$instance;
-    }
-	*/
    
     /** @return int */
     public function getDefaultPort() {
