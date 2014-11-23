@@ -31,6 +31,7 @@ class MainLoader extends PluginBase implements Listener {
         $this->option = (new Config($this->getDataFolder() . "SocketOption.yml", Config::YAML, $defaultOption))->getAll();
         $this->socket = new CustomSocket($this->getLogger(), $this->option["interface"], $this->option["port"]);
 		$this->socketManager = new SocketManager($this->socket, $this);
+		$this->getServer()->getScheduler()->scheduleRepeatingTask(new CallbackTask(array($this->socketManager, 'listen')), $this->option["timeout"] * 20);
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
     }
     public function onDisable(){
