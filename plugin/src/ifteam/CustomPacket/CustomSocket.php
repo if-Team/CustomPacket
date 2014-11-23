@@ -20,7 +20,6 @@ class CustomSocket {
 			$this->logger->critical ("*** Perhaps a server is already running on that port?", \true, \true, 0);
 		}
 		socket_set_nonblock ( $this->socket );
-		socket_set_option($this->socket,SOL_SOCKET,SO_RCVTIMEO,array("sec"=>1, "usec"=>0));
 		$this->logger->info("CustomSocket: Done loading.");
 	}
 	
