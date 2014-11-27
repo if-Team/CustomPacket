@@ -29,8 +29,8 @@ class MainLoader extends PluginBase implements Listener {
             "port" => 19131
         ];
         $this->option = (new Config($this->getDataFolder() . "SocketOption.yml", Config::YAML, $defaultOption))->getAll();
-        $this->socket = new CustomSocket($this->getLogger(), $this->option["interface"], $this->option["port"]);
-		$this->socketManager = new SocketManager($this->socket, $this);
+        $this->socket = new CustomSocket($this->getServer(), $this->option["interface"], $this->option["port"]);
+		//$this->socketManager = new SocketManager($this->socket, $this);
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
     }
     public function onDisable(){
