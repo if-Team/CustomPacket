@@ -8,10 +8,17 @@ var CustomPacket = (function(){
 	
 	"use strict";
 	
-	var PORT = 19131; ///< 통신에 사용할 포트. PE의 기본 포트가 19132이므로 19131을 채택했습니다. (근데 이거 어디에 쓰이는거지)
+	var PORT  = 19131; ///< 통신에 사용할 포트. PE의 기본 포트가 19132이므로 19131을 채택했습니다.
 	var DEBUG = true; ///< 디버그 모드. true이면 디버깅 메세지가 출력됩니다.
 	
-	var channel = null; ///< 소켓 통신에 쓰이는 객체입니다.
+	var channel; ///< 소켓 통신에 쓰이는 객체입니다.
+	var decoder = java.nio.charset.Charset.forName("UTF-8").newDecoder(); ///< 바이트버퍼를 UTF-8로 디코딩해주는 객체입니다.
+	
+	try{
+		channel = java.nio.channels.DatagramChannel.open();
+	}catch(e){
+		out(e.name + " - " + e.message);
+	}
 	
 	/**
 	 * @brief  디버깅 메세지를 출력합니다.
@@ -22,9 +29,8 @@ var CustomPacket = (function(){
 		print(message);
 	}
 	
-	
 	/**
-	 * @brief  소켓을 닫고, 모든 쓰레드를 비활성화합니다.
+	 * @brief  소켓을 닫습니다.
 	 * @return 없음
 	 */
 	function finalize(){
@@ -36,93 +42,52 @@ var CustomPacket = (function(){
 	
 	/**
 	 * @brief  문자열 패킷을 보냅니다. 예외는 내부에서 처리합니다.
-	 * @param  message 보내는 문자열
-	 * @param  ip      수신자의 IP 문자열
-	 * @param  port    수신자의 포트 번호. 생략시 PORT로 초기화.
-	 * @return 보낸 패킷의 바이트 수
+	 * @param  str  보내는 문자열
+	 * @param  hook 서버가 응답한 내용을 전달받을 함수
+	 * @param  ip   서버의 IP 문자열
+	 * @param  port 서버의 포트 번호. 기본값은 PORT
+	 * @return 없음
 	 */
-	function sendPacket(message, ip, port){
+	function sendPacket(str, hook, ip, port){
+		//TODO: 더 이상 이 메서드는 보내는 것만 하지 않습니다. 메서드 이름을 적절하게 바꿔야 합니다.
+		
 		new java.lang.Thread({run: function(){
-			if(channel === null) throw new Error("channel is not initialized");
+			
+			if(channel === null){
+				throw new Error("channel is not initialized");
+			}
 			
 			port = port || PORT;
 			
 			try{
-				var data = java.nio.ByteBuffer.wrap(new java.lang.String(message).getBytes());
-				var receiverAddress = new java.net.InetSocketAddress(ip, port);
-				var sentBytes = channel.send(data, receiverAddress);
-
+				var remoteAddress = new java.net.InetSocketAddress(ip, port);
+				var sendBuffer = java.nio.ByteBuffer.wrap(new java.lang.String(str).getBytes("UTF-8"));
+				var sentBytes = channel.send(sendBuffer, remoteAddress);
+				
 				if(DEBUG){
-					out("SENDING SUCCEEDED - TRANSFERRED " + sentBytes + " BYTES");
+					out("SENT " + sentBytes + " BYTES!");
 				}
-
-				return sentBytes;
+				
+				var receiveBuffer  = java.nio.ByteBuffer.allocateDirect(65507);
+				channel.receive(receiveBuffer);
+				
+				receiveBuffer.flip();
+				var read = decoder.decode(receiveBuffer).toString() + "";
+				receiveBuffer.clear();
+				
+				hook(read);
+				
+				if(DEBUG){
+					out("RECIEVED! - " + read);
+				}
 			}catch(e){
-				if(DEBUG){
-					out("SEND FAILED - " + e);
-					out(e.name + " - line " + e.lineNumber + "\n" + e.stack);
-				}
+				out(e.name + " - " + e.message);
 			}
 		}}).start();
-	}
-	
-	/**
-	 * @brief  패킷을 수신했을 때 호출되는 콜백 메서드입니다.
-	 * @param  result 수신한 문자열
-	 * @return 없음
-	 */
-	function onPacketReceive(result){
-		//TODO: Implement behavior when packet received
-
-		if(DEBUG){
-			out("RECIEVED DATA - " + result);
-		}
-	}
-	
-	try{
-		channel = java.nio.channels.DatagramChannel.open();
-		
-		new java.lang.Thread({run: function(){
-			
-			var buffer = java.nio.ByteBuffer.allocate(65507);
-			var decoder = java.nio.charset.Charset.defaultCharset().newDecoder();
-			
-			while(true){
-				if(channel === null) continue;
-
-				try{
-					var read = channel.receive(buffer);
-					if(read === -1) continue;
-
-					buffer.flip(); // 버퍼를 플립합니다. (java.nio.ByteBuffer 클래스를 보세요)
-					var data = decoder.decode(buffer).toString() + "";
-					buffer.clear(); // 버퍼를 비웁니다.
-
-					onPacketReceive(data); // 콜백을 호출합니다.
-
-					if(DEBUG){
-						out("RECIEVED FROM PMMP - BYTES: " + read);
-					}
-				}catch(e){
-					if(DEBUG){
-						out("RECEIVE FAILED - " + e);
-						out(e.name + " - line " + e.lineNumber + "\n" + e.stack);
-					}
-				}
-			}
-		}}).start();
-		
-	}catch(e){
-		if(DEBUG){
-			out("CHANNEL CREATE FAILED - " + e);
-			out(e.name + " - line " + e.lineNumber + "\n" + e.stack);
-		}
 	}
 	
 	return {
-		PORT: PORT,
 		sendPacket: sendPacket,
 		finalize: finalize
 	};
-	
 }());
