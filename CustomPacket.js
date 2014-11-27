@@ -17,16 +17,17 @@ var CustomPacket = (function(){
 	try{
 		channel = java.nio.channels.DatagramChannel.open();
 	}catch(e){
-		out(e.name + " - " + e.message);
+		debug(e.name + " - " + e.message, true);
 	}
 	
 	/**
 	 * @brief  디버깅 메세지를 출력합니다.
-	 * @param  message 출력하는 메세지
+	 * @param  message 출력할 메세지
+	 * @param  force   디버그 모드가 아닐 때의 출력 여부 - 생략 가능
 	 * @return 없음
 	 */
-	function out(message){
-		print(message);
+	function debug(message, force){
+		if(DEBUG || force) print(message);
 	}
 	
 	/**
@@ -45,7 +46,7 @@ var CustomPacket = (function(){
 	 * @param  str  보내는 문자열
 	 * @param  hook 서버가 응답한 내용을 전달받을 함수
 	 * @param  ip   서버의 IP 문자열
-	 * @param  port 서버의 포트 번호. 기본값은 PORT
+	 * @param  port 서버의 포트 번호 - 생략 가능, 기본값은 PORT
 	 * @return 없음
 	 */
 	function sendPacket(str, hook, ip, port){
@@ -64,9 +65,7 @@ var CustomPacket = (function(){
 				var sendBuffer = java.nio.ByteBuffer.wrap(new java.lang.String(str).getBytes("UTF-8"));
 				var sentBytes = channel.send(sendBuffer, remoteAddress);
 				
-				if(DEBUG){
-					out("SENT " + sentBytes + " BYTES!");
-				}
+				debug("SENT " + sentBytes + " BYTES!");
 				
 				var receiveBuffer  = java.nio.ByteBuffer.allocateDirect(65507);
 				channel.receive(receiveBuffer);
@@ -77,11 +76,9 @@ var CustomPacket = (function(){
 				
 				hook(read);
 				
-				if(DEBUG){
-					out("RECIEVED! - " + read);
-				}
+				debug("RECIEVED! - " + read);
 			}catch(e){
-				out(e.name + " - " + e.message);
+				debug(e.name + " - " + e.message, true);
 			}
 		}}).start();
 	}
