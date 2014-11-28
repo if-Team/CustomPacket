@@ -74,9 +74,9 @@ var CustomPacket = (function(){
 				var read = decoder.decode(receiveBuffer).toString() + "";
 				receiveBuffer.clear();
 				
-				hook(read);
-				
 				debug("I RECIEVED FROM SERVER! NOW CALLING HOOK...");
+				
+				hook(read);
 			}catch(e){
 				debug(e.name + " - " + e.message, true);
 			}
