@@ -49,9 +49,12 @@ class CustomSocket extends Thread{
 		while(1){
 			$buffer = $address = $port = NULL;
 			if($this->recvPacket($buffer, $address, $port) !== false){
-				echo 'GOTCHA! from: '.$address.':'.$port.', data: '.$buffer.PHP_EOL;
+				echo 'GOTCHA!! from: '.$address.':'.$port.', data: '.$buffer.PHP_EOL;
 				$plugin->callEvent('rcv', array('rawstring' => $buffer, 'ip' => $address, 'port' => $port));
-				$this->sendPacket('You sent '. $buffer .' !!! success! WOW!', $address, $port, true); //Test code. should be remove in official release.
+				
+				$message = 'You sent "'. $buffer .'" to me! WOW!';
+				echo 'responding to: '.$address.':'.$port.', data: '.$message.$buffer.PHP_EOL;
+				$this->sendPacket($message, $address, $port, true); //Test code. should be remove in official release.
 			}
 		}
 	}
