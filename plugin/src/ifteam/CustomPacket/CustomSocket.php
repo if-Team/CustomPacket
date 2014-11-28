@@ -35,9 +35,9 @@ class CustomSocket extends Thread{
 	public function run(){
 		$this->socket = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
 		if (socket_bind ( $this->socket, $this->interface, $this->port ) === true) {
-			socket_set_option ( $this->socket, SOL_SOCKET, SO_REUSEADDR, 0 );
-			socket_set_option ( $this->socket, SOL_SOCKET, SO_RCVBUF, 1024 * 1024 );
-			socket_set_option ( $this->socket, SOL_SOCKET, SO_SNDBUF, 1024 * 1024 * 8 );
+			@socket_set_option ( $this->socket, SOL_SOCKET, SO_REUSEADDR, 0 );
+			@socket_set_option ( $this->socket, SOL_SOCKET, SO_RCVBUF, 1024 * 1024 );
+			@socket_set_option ( $this->socket, SOL_SOCKET, SO_SNDBUF, 1024 * 1024 * 8 );
 		} else {
 			$this->logger->critical ("*** FAILED TO BIND TO " . $this->interface . ":" . $this->port . "!", true, true, 0 );
 			$this->logger->critical ("*** Perhaps a server is already running on that port?", \true, \true, 0);
@@ -46,7 +46,7 @@ class CustomSocket extends Thread{
 		//$this->logger->info("CustomSocket: Done loading. Enthering the loop...");
 		while(1){
 			$buffer = $address = $port = NULL;
-			if($this->recvPacket($buffer, $address, $port, true) !== false){
+			if($this->recvPacket($buffer, $address, $port) !== false){
 				echo 'GOTCHA! from: '.$address.':'.$port.', data: '.$buffer.PHP_EOL;
 				// $this->caller->getPluginManager()->callEvent(new ReceivePacketEvent(new CustomPacket($buffer), $address, $port)); //THIS CAUSES SEGFAULT!
 			}
