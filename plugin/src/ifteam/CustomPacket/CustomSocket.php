@@ -49,6 +49,7 @@ class CustomSocket extends Thread{
 			if($this->recvPacket($buffer, $address, $port) !== false){
 				echo 'GOTCHA! from: '.$address.':'.$port.', data: '.$buffer.PHP_EOL;
 				// $this->caller->getPluginManager()->callEvent(new ReceivePacketEvent(new CustomPacket($buffer), $address, $port)); //THIS CAUSES SEGFAULT!
+				$this->sendPacket('You sent '. $buffer .' !!! success! WOW!', $address, $port, true); //Test code. should be remove in official release.
 			}
 		}
 	}
