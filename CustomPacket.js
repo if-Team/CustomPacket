@@ -65,9 +65,9 @@ var CustomPacket = (function(){
 				var sendBuffer = java.nio.ByteBuffer.wrap(new java.lang.String(str).getBytes("UTF-8"));
 				var sentBytes = channel.send(sendBuffer, remoteAddress);
 				
-				debug("SENT " + sentBytes + " BYTES!");
+				debug("SENT " + sentBytes + " BYTES TO " + remoteAddress.toString());
 				
-				var receiveBuffer  = java.nio.ByteBuffer.allocateDirect(65507);
+				var receiveBuffer = java.nio.ByteBuffer.allocateDirect(65507);
 				channel.receive(receiveBuffer);
 				
 				receiveBuffer.flip();
@@ -76,7 +76,7 @@ var CustomPacket = (function(){
 				
 				hook(read);
 				
-				debug("RECIEVED! - " + read);
+				debug("RECIEVED - " + read);
 			}catch(e){
 				debug(e.name + " - " + e.message, true);
 			}
