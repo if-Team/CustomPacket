@@ -4,17 +4,18 @@ namespace ifteam\CustomPacket;
 
 use pocketmine\Thread;
 use pocketmine\Server;
+use ifteam\CustomPacket\Event\ReceivePacketEvent;
 
 class CustomSocket extends Thread{
 	
-	protected $caller, $logger, $interface, $port, $socket;
+	protected $caller, $interface, $port, $socket;
 	
 	public function __construct($caller, $interface = '0.0.0.0', $port = 19131){
-		$this->caller = $caller;
-		$this->logger = $caller->getLogger();
+		global $plugin;
+		$plugin = $caller;
 		$this->interface = filter_var($interface, FILTER_VALIDATE_IP)? $interface : '0.0.0.0';
 		$this->port = $port;
-		$this->start();
+		$this->start(PTHREADS_INHERIT_ALL | PTHREADS_ALLOW_GLOBALS);
 	}
 	
 	public function sendPacket($buffer, $address, $port, $scream = false){
@@ -33,22 +34,23 @@ class CustomSocket extends Thread{
 	}
 	
 	public function run(){
+		global $plugin;
 		$this->socket = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
 		if (socket_bind ( $this->socket, $this->interface, $this->port ) === true) {
 			@socket_set_option ( $this->socket, SOL_SOCKET, SO_REUSEADDR, 0 );
 			@socket_set_option ( $this->socket, SOL_SOCKET, SO_RCVBUF, 1024 * 1024 );
 			@socket_set_option ( $this->socket, SOL_SOCKET, SO_SNDBUF, 1024 * 1024 * 8 );
 		} else {
-			$this->logger->critical ("*** FAILED TO BIND TO " . $this->interface . ":" . $this->port . "!", true, true, 0 );
-			$this->logger->critical ("*** Perhaps a server is already running on that port?", \true, \true, 0);
+			$plugin->getServer()->getLogger()->critical ("*** FAILED TO BIND TO " . $this->interface . ":" . $this->port . "!", true, true, 0 );
+			$plugin->getServer()->getLogger()->critical ("*** Perhaps a server is already running on that port?", \true, \true, 0);
 		}
 		socket_set_nonblock ( $this->socket );
-		//$this->logger->info("CustomSocket: Done loading. Enthering the loop...");
+		$plugin->getServer()->getLogger()->info("CustomSocket: Done loading. Enthering the loop...");
 		while(1){
 			$buffer = $address = $port = NULL;
 			if($this->recvPacket($buffer, $address, $port) !== false){
 				echo 'GOTCHA! from: '.$address.':'.$port.', data: '.$buffer.PHP_EOL;
-				// $this->caller->getPluginManager()->callEvent(new ReceivePacketEvent(new CustomPacket($buffer), $address, $port)); //THIS CAUSES SEGFAULT!
+				$plugin->callEvent('rcv', array('rawstring' => $buffer, 'ip' => $address, 'port' => $port));
 				$this->sendPacket('You sent '. $buffer .' !!! success! WOW!', $address, $port, true); //Test code. should be remove in official release.
 			}
 		}
