@@ -27,7 +27,7 @@ var CustomPacket = (function(){
 	 * @return 없음
 	 */
 	function debug(message, force){
-		if(DEBUG || force) print(message);
+		if(DEBUG || force) clientMessage(message);
 	}
 	
 	/**
@@ -65,7 +65,7 @@ var CustomPacket = (function(){
 				var sendBuffer = java.nio.ByteBuffer.wrap(new java.lang.String(str).getBytes("UTF-8"));
 				var sentBytes = channel.send(sendBuffer, remoteAddress);
 				
-				debug("SENT " + sentBytes + " BYTES TO " + remoteAddress.toString());
+				debug("I SUCCESSFULLY SENT " + sentBytes + " BYTES TO " + remoteAddress.toString() + "!");
 				
 				var receiveBuffer = java.nio.ByteBuffer.allocateDirect(65507);
 				channel.receive(receiveBuffer);
@@ -76,7 +76,7 @@ var CustomPacket = (function(){
 				
 				hook(read);
 				
-				debug("RECIEVED - " + read);
+				debug("I RECIEVED FROM SERVER! NOW CALLING HOOK...");
 			}catch(e){
 				debug(e.name + " - " + e.message, true);
 			}
@@ -96,8 +96,9 @@ function procCmd(str){
     
 	switch(cmd){
 	    case "send":
+	    	preventDefault();
             CustomPacket.sendPacket(str.join(" "), function(response){
-            	clientMessage("I got response! - " + response);
+            	clientMessage("RESPONSE : " + response);
             }, Server.getAddress());
             break;
 	}
