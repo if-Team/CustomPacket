@@ -2,27 +2,30 @@
 
 namespace ifteam\CustomPacket;
 
-use pocketmine\plugin\PluginBase;
 use pocketmine\utils\Config;
 use pocketmine\event\Listener;
 use pocketmine\Server;
-use ifteam\CustomPacket\event\ReceivePacketEvent;
-use ifteam\CustomPacket\event\SendPacketEvent;
+use ifteam\CustomPacket\Event\ReceivePacketEvent;
+use ifteam\CustomPacket\Event\SendPacketEvent;
 use ifteam\CustomPacket\Packet\CustomPacket;
+use ifteam\CustomPacket\SessionManager;
 use pocketmine\scheduler\CallbackTask;
 
-class MainLoader extends PluginBase implements Listener {
+class MainLoader extends CPBase implements Listener {
 
     /** @var CustomSocket */
     private $socket;
     private $option;
-    private $socketManager;
+    private $sessionManager;
+	private $dbg = true; // debug/test mode
 	
 	public $stream = null;
     
     private static $instance = null;
+    private $registeredCallbacks;
     
     public function onEnable() {
+		$this->registeredCallbacks = array();
     	if(self::$instance == null)
     		self::$instance = $this;
         $defaultOption = [

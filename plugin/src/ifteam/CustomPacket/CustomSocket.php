@@ -47,6 +47,7 @@ class CustomSocket extends Thread{
 		socket_set_nonblock ( $this->socket );
 		$plugin->getServer()->getLogger()->info("CustomSocket: Done loading. Enthering the loop...");
 		while(1){
+			$plugin->getServer()->getLogger()->debug('Wating for packet(s)...');
 			$buffer = $address = $port = NULL;
 			if($this->recvPacket($buffer, $address, $port) !== false){
 				echo 'GOTCHA!! from: '.$address.':'.$port.', data: '.$buffer.PHP_EOL;
