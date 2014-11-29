@@ -8,7 +8,6 @@ use pocketmine\Server;
 use ifteam\CustomPacket\Event\ReceivePacketEvent;
 use ifteam\CustomPacket\Event\SendPacketEvent;
 use ifteam\CustomPacket\Packet\CustomPacket;
-use ifteam\CustomPacket\SessionManager;
 use pocketmine\scheduler\CallbackTask;
 
 class MainLoader extends CPBase implements Listener {
