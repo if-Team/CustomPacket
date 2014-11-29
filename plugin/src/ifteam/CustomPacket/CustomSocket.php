@@ -47,14 +47,13 @@ class CustomSocket extends Thread{
 		socket_set_nonblock ( $this->socket );
 		$plugin->getServer()->getLogger()->info("CustomSocket: Done loading. Enthering the loop...");
 		while(1){
-			$plugin->getServer()->getLogger()->debug('Wating for packet(s)...');
 			$buffer = $address = $port = NULL;
 			if($this->recvPacket($buffer, $address, $port) !== false){
-				echo 'GOTCHA!! from: '.$address.':'.$port.', data: '.$buffer.PHP_EOL;
+				$plugin->getServer()->getLogger()->debug('GOTCHA!! from: '.$address.':'.$port.', data: '.$buffer);
 				$plugin->callEvent('recv', array('rawstring' => $buffer, 'ip' => $address, 'port' => $port));
 				
 				$message = 'You sent "'. $buffer .'" to me! WOW!';
-				echo 'responding to: '.$address.':'.$port.', data: '.$message.$buffer.PHP_EOL;
+				$plugin->getServer()->getLogger()->debug('Sending back to: '.$address.':'.$port.', data: '.$message.$buffer);
 				$this->sendPacket($message, $address, $port, true); //Test code. should be remove in official release.
 			}
 		}
