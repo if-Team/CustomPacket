@@ -50,7 +50,7 @@ class CustomSocket extends Thread{
 			$buffer = $address = $port = NULL;
 			if($this->recvPacket($buffer, $address, $port) !== false){
 				echo 'GOTCHA!! from: '.$address.':'.$port.', data: '.$buffer.PHP_EOL;
-				$plugin->callEvent('rcv', array('rawstring' => $buffer, 'ip' => $address, 'port' => $port));
+				$plugin->callEvent('recv', array('rawstring' => $buffer, 'ip' => $address, 'port' => $port));
 				
 				$message = 'You sent "'. $buffer .'" to me! WOW!';
 				echo 'responding to: '.$address.':'.$port.', data: '.$message.$buffer.PHP_EOL;
