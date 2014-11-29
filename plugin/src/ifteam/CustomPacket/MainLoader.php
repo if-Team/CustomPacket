@@ -50,51 +50,6 @@ class MainLoader extends PluginBase implements Listener {
         return $this->option["port"];
     }
 
-    /**
-     * ReceivePacket and callEvent ReceivePacketEvent
-     * or ReceiveJSONPacketEvent (is_numeric check)
-     *
-     * @param int|string $data            
-     * @param int $ip            
-     * @param int $port            
-     *
-     */
-    public function receivePacket($data, $ip, $port) {
-        if(is_numeric($data)){
-            $event = new ReceivePacketEvent($data, $ip, $port);
-            $this->getServer()->getPluginManager()->callEvent($event);
-        }else{
-            $event = new ReceiveJSONPacketEvent(JSON_Decode($data), $ip, $port);
-            $this->getServer()->getPluginManager()->callEvent($event);
-        }
-    }
-    /**
-     * SendPacket and callEvent SendPacketEvent
-     * or SendJSONPacketEvent (is_numeric check)
-     *
-     * @param int|string $packet
-     * @param string $ip            
-     * @param int $port            
-     *
-     */
-    public static function sendPacket($packet, $ip, $port) {
-        if(is_numeric($packet)){
-            $event = new SendPacketEvent($packet, $ip, $port);
-            $this->getServer ()->getPluginManager ()->callEvent ($event);
-            if(!$event->isCancelled()){
-                $packet = $event->getPacket();
-                $this->socket->writePacket($packet, $ip, $port);
-            }
-        }else{
-            $event = new SendJSONPacketEvent($this, $packet, $ip, $port);
-            $this->getServer()->getPluginManager()->callEvent($event);
-            if(!$event->isCancelled()){
-                $packet = JSON_Encode($event->getPacket());
-                $this->socket->writePacket($packet, $ip, $port);
-            }
-        }
-    }
-	
 	public function callEvent($type, array $data){
 		switch($type){
 			case 'recv':
