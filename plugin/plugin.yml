@@ -3,4 +3,4 @@ main: ifteam\CustomPacket\MainLoader
 author: ifteam
 version: 1.0-alpha
 load: STARTUP
-api: [1.4.1]
+api: [1.8.0]
