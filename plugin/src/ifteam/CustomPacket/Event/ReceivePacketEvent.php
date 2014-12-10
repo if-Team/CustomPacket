@@ -7,12 +7,12 @@ use ifteam\CustomPacket\Packet\CustomPacket;
 
 class ReceivePacketEvent extends CustomPacketEvent{
 
-	private $data;
-	
-	public function __construct($packet, $ip, $port) {
-		$packet->decode();
-		parent::__construct ($packet);
-	}
+    private $data;
+    
+    public function __construct($packet, $ip, $port) {
+        $packet->decode();
+        parent::__construct ($packet);
+    }
 }
 
 ?>

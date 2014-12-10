@@ -6,10 +6,10 @@ use pocketmine\event\Cancellable;
 use ifteam\CustomPacket\Packet\CustomPacket;
 
 class SendPacketEvent extends CustomPacketEvent implements Cancellable{
-	public function __construct(CustomPacket $packet, $ip, $port) {
-		parent::__construct ($packet, $ip, $port );
-	}
-	
+    public function __construct(CustomPacket $packet, $ip, $port) {
+        parent::__construct ($packet, $ip, $port );
+    }
+    
     public function getPacket() {
         return $this->packet;
     }

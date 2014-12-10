@@ -14,7 +14,7 @@ class CustomPacketEvent extends Event{
         $this->packet = $packet;
         $this->ip = $ip;
         $this->port = $port;
-    }	
+    }    
     public function getPacket() {
         return $this->packet;
     }
