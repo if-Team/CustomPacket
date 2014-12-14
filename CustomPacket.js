@@ -42,20 +42,25 @@ var CustomPacket = (function(){
     }
     
     /**
-     * @param  String buffer
-     * @param  String ip
-     * @param  void|int port
-     * 
-     * @return void
+     * @brief  서버에 연결해 통신을 합니다. 예외는 내부에서 처리합니다.
+     * @param  str  보내는 문자열
+     * @param  hook 서버가 응답한 내용을 전달받을 함수
+     * @param  ip   서버의 IP 문자열
+     * @param  port 서버의 포트 번호 - 생략 가능, 기본값은 PORT
+     * @return 없음
      */
-    function connectionServer(buffer, ip, port){
+    function connect(str, hook, ip, port){
         new java.lang.Thread({run: function(){
+            
             if(channel === null){
                 throw new Error("channel is not initialized");
             }
+            
+            port = port || PORT;
+            
             try{
-                var remoteAddress = new java.net.InetSocketAddress(ip, port ? port : PORT);
-                var sendBuffer = java.nio.ByteBuffer.wrap(new java.lang.String(buffer).getBytes("UTF-8"));
+                var remoteAddress = new java.net.InetSocketAddress(ip, port);
+                var sendBuffer = java.nio.ByteBuffer.wrap(new java.lang.String(str).getBytes("UTF-8"));
                 var sentBytes = channel.send(sendBuffer, remoteAddress);
                 
                 debug("I SUCCESSFULLY SENT " + sentBytes + " BYTES TO " + remoteAddress.toString() + "!");
@@ -69,17 +74,15 @@ var CustomPacket = (function(){
                 
                 debug("I RECIEVED FROM SERVER! NOW CALLING HOOK...");
                 
-                receivePacket(read);
+                hook(read);
             }catch(e){
                 debug(e.name + " - " + e.message, true);
             }
         }}).start();
     }
     
-    function receivePacket(buffer){}
-    
     return {
-        cmntPacket: cmntPacket,
+    	connect: connect,
         finalize: finalize
     };
 }());
