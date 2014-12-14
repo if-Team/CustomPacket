@@ -50,7 +50,7 @@ var CustomPacket = (function(){
 	 * @return 없음
 	 */
 	function cmntPacket(str, hook, ip, port){
-		//TODO: 더 이상 이 메서드는 보내는 것만 하지 않습니다. 메서드 이름을 적절하게 바꿔야 합니다.
+		//TODO: 메서드 이름 바꿨으니, 보내는 것 외의 기능을 추가해야합니다.
 		
 		new java.lang.Thread({run: function(){
 			
