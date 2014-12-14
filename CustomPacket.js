@@ -49,7 +49,7 @@ var CustomPacket = (function(){
 	 * @param  port 서버의 포트 번호 - 생략 가능, 기본값은 PORT
 	 * @return 없음
 	 */
-	function sendPacket(str, hook, ip, port){
+	function cmntPacket(str, hook, ip, port){
 		//TODO: 더 이상 이 메서드는 보내는 것만 하지 않습니다. 메서드 이름을 적절하게 바꿔야 합니다.
 		
 		new java.lang.Thread({run: function(){
@@ -84,7 +84,7 @@ var CustomPacket = (function(){
 	}
 	
 	return {
-		sendPacket: sendPacket,
+		cmntPacket: cmntPacket,
 		finalize: finalize
 	};
 }());
