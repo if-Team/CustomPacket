@@ -18,4 +18,3 @@ class CustomEncodedPacket extends CustomPacket{
         $this->data = base64_encode($this->data);
     }
 }
-?>

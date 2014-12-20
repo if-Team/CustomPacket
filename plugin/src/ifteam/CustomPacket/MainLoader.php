@@ -67,4 +67,4 @@ class MainLoader extends CPBase implements Listener {
         $this->getServer()->getLogger()->debug("[CustomPacket Event debug message]\n".$dump);
     }
 }
-?>
+

@@ -14,4 +14,3 @@ class CPBase extends PluginBase {
         return ModPEProtocol::PROTOCOL_VERSION;
     }
 }
-?>

@@ -9,4 +9,4 @@ class CustomJSONPacket extends CustomPacket{
         $this->type = $pid;
     }
 }
-?>
+
