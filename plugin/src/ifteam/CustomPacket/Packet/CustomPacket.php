@@ -12,7 +12,7 @@ class CustomPacket{
     protected $rawdata;
     
     public function __construct($rawstring){
-        $this->rawdata =     $rawstring;
+        $this->rawdata = $rawstring;
         $decoded = $this->splitHeader($rawstring);
         $json = json_decode($decoded[1], true);
         if($json === false){
