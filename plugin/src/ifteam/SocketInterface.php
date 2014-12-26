@@ -43,14 +43,19 @@ class SocketInterface extends \Thread{
         $this->logInfo("Thread started.");
         while($this->shutdown === false){
             if(strlen($buffer = $this->readInternalQueue()) > 0){
-                //TODO
+                switch(ord($buffer{0})){
+                    case Info::SIGNAL_SHUTDOWN:
+                        $this->shutdown = true;
+                        break;
+                    //TODO
+                }
             }
         }
         $this->logEmergency("CustomSocket crashed!");
     }
     
     public function shutdown(){
-        $this->shutdown = true;
+        $this->pushInternalQueue(chr(Info::SIGNAL_SHUTDOWN));
     }
     
 }
