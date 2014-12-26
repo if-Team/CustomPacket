@@ -1,5 +1,7 @@
 <?
 
+namespace ifteam\CustomPacket;
+
 use pocketmine\plugin\PluginBase;
 use pocketmine\Server;
 

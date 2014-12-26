@@ -1,5 +1,7 @@
 <?
 
+namespace ifteam\CustomPacket;
+
 //List of CustomPacket packet headers
 
 class Info{

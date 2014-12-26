@@ -1,5 +1,7 @@
 <?
 
+namespace ifteam\CustomPacket;
+
 class SocketInterface extends \Thread{
     
     protected $internalQueue, $externalQueue, $logger, $port, $interface, $shutdown;
