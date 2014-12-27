@@ -11,8 +11,9 @@ class Info{
     const PACKET_RECV = 0x02;
     const PACKET_SEND_ENCRYPTED = 0x03; //Reserved for future use
     const PACKET_RECV_ENCRYPTED = 0x04; //Reserved for future use
-    //0x05~0xef: Reserved
+    //0x05~0xdf: Reserved
     const SIGNAL_UPDATE = 0xf0;
+    const SIGNAL_TICK = 0xf1;
     const SIGNAL_SHUTDOWN = 0xff;
     
     //External packet headers.(TODO)

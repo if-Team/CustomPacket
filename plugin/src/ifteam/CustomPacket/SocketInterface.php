@@ -2,62 +2,57 @@
 
 namespace ifteam\CustomPacket;
 
-class SocketInterface extends \Thread{
+use pocketmine\Server;
+
+class SourceInterface{
     
-    protected $internalQueue, $externalQueue, $logger, $port, $interface, $shutdown;
+    private $internalThreaded;
+    private $externalThreaded;
+    private $server;
+    private $socket;
     
-    public function __construct(\Threaded $inputThread, \Threaded $outputThread, \ThreadedLogger $logger, $port, $interface = "0.0.0.0"){
-        $this->internalQueue = $internalThread;
-        $this->externalQueue = $externalThread;
-        $this->logger = $logger;
-        $this->port = $port;
-        $this->interface = $interface;
-        $this->shutdown = false;
-        $this->logInfo("Initialization compelete. Starting thread...");
-        $this->start();
+    public function __construct(Server $server){
+        $this->internalThreaded = new \Threaded();
+        $this->externalThreaded = new \Threaded();
+        $this->server = $server;
+        $this->socket = new CustomSocket($this->internalThreaded, $this->externalThreaded, $this->server->getLogger(), 19131, $this->server->getIp() === "" ? "0.0.0.0" : $this->server->getIp());
     }
     
-    public function pushMainQueue($buffer){
-        $this->externalQueue[] = $buffer;
+    public function process(){
+        $work = false;
+        if($this->handlePacket()){
+            $work = true;
+            while($this->handlePacket());
+        }
+        $this->pushInternalQueue([chr(Info::SIGNAL_TICK)]);
+        return $work;
+    }
+    
+    public function handlePacket(){
+        if(strlen($packet = $this->readMainQueue()) > 0){
+            switch(ord($packet[0]{0})){
+                
+            }
+            return true;
+        }
+        
+        return false;
+    }
+    
+    public function pushMainQueue(array $buffer){
+        $this->exteranlThreaded[] = $buffer;
     }
     
     public function readMainQueue(){
-        return $this->externalQueue->shift();
+        return $this->externalThreaded->shift();
     }
     
-    public function pushInternalQueue($buffer){
-        $this->internalQueue[] = $buffer;
+    public function pushInternalQueue(array $buffer){
+        $this->internalThreaded = $buffer;
     }
     
     public function readInternalQueue(){
-        return $this->internalQueue->shift();
-    }
-    
-    public function logInfo($str){
-        $this->logger->info("[CustomSocket Thread #".\Thread::getCurrentThreadId()."] $str");
-    }
-    
-    public function logEmergency($str){
-        $this->logger->emergency("[CustomSocket Thread #".\Thread::getCurrentThreadId()."] $str");
-    }
-    
-    public function run(){
-        $this->logInfo("Thread started.");
-        while($this->shutdown === false){
-            if(strlen($buffer = $this->readInternalQueue()) > 0){
-                switch(ord($buffer{0})){
-                    case Info::SIGNAL_SHUTDOWN:
-                        $this->shutdown = true;
-                        break;
-                    //TODO
-                }
-            }
-        }
-        $this->logEmergency("CustomSocket crashed!");
-    }
-    
-    public function shutdown(){
-        $this->pushInternalQueue(chr(Info::SIGNAL_SHUTDOWN));
+        return $this->internalThreaded->shift();
     }
     
 }
