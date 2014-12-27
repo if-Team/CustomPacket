@@ -4,7 +4,7 @@ namespace ifteam\CustomPacket;
 
 use pocketmine\Server;
 
-class SourceInterface{
+class SocketInterface{
     
     private $internalThreaded;
     private $externalThreaded;
@@ -21,22 +21,27 @@ class SourceInterface{
     public function process(){
         $work = false;
         if($this->handlePacket()){
+            
             $work = true;
             while($this->handlePacket());
         }
         $this->pushInternalQueue([chr(Info::SIGNAL_TICK)]);
-        return $work;
+        return $work; //For future use. Not now.
     }
     
     public function handlePacket(){
         if(strlen($packet = $this->readMainQueue()) > 0){
-            switch(ord($packet[0]{0})){
+            switch(ord($packet{0})){
                 
             }
             return true;
         }
         
         return false;
+    }
+    
+    public function shutdown(){
+        $this->pushInternalQueue([chr(Info::SIGNAL_SHUTDOWN)]);
     }
     
     public function pushMainQueue(array $buffer){
@@ -48,7 +53,7 @@ class SourceInterface{
     }
     
     public function pushInternalQueue(array $buffer){
-        $this->internalThreaded = $buffer;
+        $this->internalThreaded[] = $buffer;
     }
     
     public function readInternalQueue(){

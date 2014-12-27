@@ -2,9 +2,13 @@
 
 namespace ifteam\CustomPacket;
 
+use ifteam\CustomPacket\Info;
+
+require("Info.php");
+
 class CustomSocket extends \Thread{
     
-    protected $internalQueue, $externalQueue, $logger, $port, $interface, $shutdown, $socket;;
+    protected $internalQueue, $externalQueue, $logger, $port, $interface, $shutdown, $socket;
     
     public function __construct(\Threaded $internalThread, \Threaded $externalThread, \ThreadedLogger $logger, $port, $interface = "0.0.0.0"){
         $this->internalQueue = $internalThread; //Used to contain internal signals
@@ -17,7 +21,7 @@ class CustomSocket extends \Thread{
         $this->start();
     }
     
-    public function pushMainQueue($buffer){
+    public function pushMainQueue(array $buffer){
         $this->externalQueue[] = $buffer;
     }
     
@@ -25,7 +29,7 @@ class CustomSocket extends \Thread{
         return $this->externalQueue->shift();
     }
     
-    public function pushInternalQueue($buffer){
+    public function pushInternalQueue(array $buffer){
         $this->internalQueue[] = $buffer;
     }
     
@@ -44,8 +48,8 @@ class CustomSocket extends \Thread{
     public function run(){
         $this->logInfo("Thread started.");
         while($this->shutdown === false){
-            if(strlen($buffer = $this->readInternalQueue()) > 0){
-                switch(ord($buffer{0})){
+            if(is_array($buffer = $this->readInternalQueue())){
+                switch(ord($buffer[0]{0})){
                     case Info::SIGNAL_UPDATE:
                         break;
                         
