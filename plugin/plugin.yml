@@ -1,6 +1,6 @@
 name: CustomPacket
 main: ifteam\CustomPacket\MainLoader
 author: ifteam
-version: indev
+version: Alpha_1.0
 load: STARTUP
 api: [1.8.0]
