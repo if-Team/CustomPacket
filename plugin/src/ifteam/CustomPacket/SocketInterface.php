@@ -3,6 +3,9 @@
 namespace ifteam\CustomPacket;
 
 use pocketmine\Server;
+use ifteam\CustomPacket\event\CustomPacketPreReceiveEvent;
+use ifteam\CustomPacket\event\CustomPacketReceiveEvent;
+use ifteam\CustomPacket\event\CustomPacketSendEvent;
 
 class SocketInterface{
     
@@ -30,7 +33,8 @@ class SocketInterface{
     
     public function handlePacket(){
         if(($packet = $this->readMainQueue()) instanceof DataPacket){
-            //TODO
+            Server::getInstance()->getPluginManager()->callEvent($ev = new CustomPacketPreReceiveEvent(clone $packet));
+            if(!$ev->isCancelled()) Server::getInstance()->getPluginManager()->callEvent($ev = new CustomPacketReceiveEvent(clone $packet));
             return true;
         }
         
@@ -39,6 +43,11 @@ class SocketInterface{
     
     public function shutdown(){
         $this->pushInternalQueue([chr(Info::SIGNAL_SHUTDOWN)]);
+    }
+    
+    public function sendPacket(DataPacket $packet){
+        Server::getInstance()->getPluginManager()->callEvent($ev = new CustomPacketSendEvent($packet));
+        if(!$ev->isCancelled()) $this->pushInternalQueue([Info::PACKET_SEND, $packet]);
     }
     
     public function pushMainQueue(DataPacket $packet){

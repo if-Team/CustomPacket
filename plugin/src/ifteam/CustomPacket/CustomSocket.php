@@ -86,6 +86,10 @@ class CustomSocket extends \Thread{
                     case Info::SIGNAL_TICK:
                         $this->doTick();
                         break;
+                        
+                    case Info::PACKET_SEND:
+                        socket_sendto($this->socket, $buffer[1]->data, 1024*1024, 0, $buffer[1]->address, $buffer[1]->port);
+                        break;
                 }
             }
         }

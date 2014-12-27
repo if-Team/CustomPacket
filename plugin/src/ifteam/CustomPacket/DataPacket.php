@@ -6,9 +6,7 @@ use pocketmine\Server;
 
 class DataPacket{ //Note: need to be abstract in future
     
-    private $address;
-    private $port;
-    private $data;
+    public  $address, $port, $data;
     
     public function __construct($address, $port, $data){
         $this->address = $address;
@@ -18,12 +16,13 @@ class DataPacket{ //Note: need to be abstract in future
     
     public function printDump(){
         $logger = Server::getInstance()->getLogger();
+        /*
         $cnt = 0;
         $lines = array();
         $line = '';
         $offset = 0x00;
         $printValue = str_split($this->data, 10);
-        /*
+        
         foreach(str_split($this->data) as $letter){
             if($cnt === 0){
                 $line .= '| 0x'. sprintf("%1$08x", $offset) . ' : ';
@@ -40,7 +39,7 @@ class DataPacket{ //Note: need to be abstract in future
             $offset++;
         }
         */
-        $logger->info("[CustomPacket] Start packet hexdump...");
+        $logger->info("[CustomPacket] Start packet information dump...");
         $logger->info("");
         $logger->info("Source address: ". $this->address);
         $logger->info("Source port:    ". $this->port);
@@ -55,7 +54,7 @@ class DataPacket{ //Note: need to be abstract in future
         $logger->info('|' .str_repeat(' ', 58) . '|');
         $logger->info(str_repeat('=', 60));
         $logger->info("");*/
-        $logger->info("[CustomPacket] End packet hexdump...");
+        $logger->info("[CustomPacket] End packet information dump...");
         
     }
 }
