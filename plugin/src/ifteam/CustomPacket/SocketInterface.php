@@ -20,20 +20,17 @@ class SocketInterface{
     
     public function process(){
         $work = false;
+        $this->pushInternalQueue([chr(Info::SIGNAL_TICK)]);
         if($this->handlePacket()){
-            
             $work = true;
             while($this->handlePacket());
         }
-        $this->pushInternalQueue([chr(Info::SIGNAL_TICK)]);
         return $work; //For future use. Not now.
     }
     
     public function handlePacket(){
-        if(strlen($packet = $this->readMainQueue()) > 0){
-            switch(ord($packet{0})){
-                
-            }
+        if(($packet = $this->readMainQueue()) instanceof DataPacket){
+            //TODO
             return true;
         }
         
@@ -44,8 +41,8 @@ class SocketInterface{
         $this->pushInternalQueue([chr(Info::SIGNAL_SHUTDOWN)]);
     }
     
-    public function pushMainQueue(array $buffer){
-        $this->exteranlThreaded[] = $buffer;
+    public function pushMainQueue(DataPacket $packet){
+        $this->exteranlThreaded[] = $packet;
     }
     
     public function readMainQueue(){

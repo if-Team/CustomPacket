@@ -13,7 +13,7 @@ class MainLoader extends PluginBase{
     public function onEnable(){
         $this->interface = new SocketInterface(Server::getInstance());
         $this->getServer()->getScheduler()->scheduleRepeatingTask(new CallbackTask(array($this->interface, "process")), 1);
-        $this->getServer()->getLogger()->info("[CustomPacket] Registered socket interface.");
+        $this->getServer()->getLogger()->info("[CustomPacket] Registered CustomSocket tick schedule.");
     }
     
 }
