@@ -1,5 +1,0 @@
-name: CustomPacket_EX
-main: ifteam\CustomPacket_EX\CustomPacket_EX
-version: 1.0-non-alpha
-author: ifteam
-api: [1.4.1]

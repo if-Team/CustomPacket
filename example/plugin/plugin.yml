@@ -1,0 +1,6 @@
+name: CustomPacket_EX
+main: ifteam\CustomPacket_EX\Main
+version: "1.0"
+author: if(team) - lem()ntea_
+api: [1.8.0]
+load: POSTWORLD

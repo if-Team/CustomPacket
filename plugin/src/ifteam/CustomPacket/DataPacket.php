@@ -3,6 +3,7 @@
 namespace ifteam\CustomPacket;
 
 use pocketmine\Server;
+use pocketmine\utils\Utils;
 
 class DataPacket{ //Note: need to be abstract in future
     
@@ -12,6 +13,10 @@ class DataPacket{ //Note: need to be abstract in future
         $this->address = $address;
         $this->port = $port;
         $this->data = $data;
+    }
+    
+    public function pid(){
+        return $this->data{0};
     }
     
     public function printDump(){
@@ -45,15 +50,12 @@ class DataPacket{ //Note: need to be abstract in future
         $logger->info("Source port:    ". $this->port);
         $logger->info("Packet length:  ". strlen($this->data));
         $logger->info("");
-        /*$logger->info(str_repeat('=', 60));
-        $logger->info('|' .str_repeat(' ', 58) . '|');
-        foreach($lines as $l){
-            $logger->info($l);
-        }
-        
-        $logger->info('|' .str_repeat(' ', 58) . '|');
-        $logger->info(str_repeat('=', 60));
-        $logger->info("");*/
+        $logger->info("Printing hexdump");
+        $logger->info(str_repeat("=", 73));
+        $dump = Utils::hexdump($this->data);
+        foreach(explode("\n", substr($dump, 0, strlen($dump) - 1)) as $line) $logger->info($line);
+        $logger->info(str_repeat("=", 73));
+        $logger->info("");
         $logger->info("[CustomPacket] End packet information dump...");
         
     }

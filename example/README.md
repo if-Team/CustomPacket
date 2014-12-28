@@ -1,1 +1,3 @@
-_**THIS FILE IS DEPRECATED AND ALSO NOT WORKS RIGHT YET! PLEASE DO NOT USE THIS PLUGIN.**_
+Example
+===
+Example plugin and script!
