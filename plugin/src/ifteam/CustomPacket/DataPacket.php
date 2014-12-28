@@ -21,29 +21,6 @@ class DataPacket{ //Note: need to be abstract in future
     
     public function printDump(){
         $logger = Server::getInstance()->getLogger();
-        /*
-        $cnt = 0;
-        $lines = array();
-        $line = '';
-        $offset = 0x00;
-        $printValue = str_split($this->data, 10);
-        
-        foreach(str_split($this->data) as $letter){
-            if($cnt === 0){
-                $line .= '| 0x'. sprintf("%1$08x", $offset) . ' : ';
-            }
-            $cnt++;
-            $line .= ord($letter) . ' ';
-            if($cnt === 10){
-                $line .= '|| '. current($printValue) . ' |';
-                next($printValue);
-                $lines[] = $line;
-                $line = '';
-                $cnt = 0;
-            }
-            $offset++;
-        }
-        */
         $logger->info("[CustomPacket] Start packet information dump...");
         $logger->info("");
         $logger->info("Source address: ". $this->address);
