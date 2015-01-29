@@ -6,7 +6,7 @@ use pocketmine\event\Listener;
 use pocketmine\plugin\PluginBase;
 use ifteam\CustomPacket\event\CustomPacketReceiveEvent;
 use ifteam\CustomPacket\DataPacket;
-use ifteam\CustomPacket\MainLoader;
+use ifteam\CustomPacket\CPAPI;
 
 class Main extends PluginBase implements Listener {
     
@@ -24,7 +24,7 @@ class Main extends PluginBase implements Listener {
         $ev->getPacket()->printDump();
         $this->getServer()->getLogger()->notice("[CustomPacket Example] Sending example packet...");
         $pk = new DataPacket($ev->getPacket()->address, $ev->getPacket()->port, "You sent me ".$ev->getPacket()->data." and this example plugin is returning packet");
-        MainLoader::sendPacket($pk);
+        CPAPI::sendPacket($pk);
     }
     
 }

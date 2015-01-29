@@ -6,6 +6,7 @@ use pocketmine\Server;
 use ifteam\CustomPacket\event\CustomPacketPreReceiveEvent;
 use ifteam\CustomPacket\event\CustomPacketReceiveEvent;
 use ifteam\CustomPacket\event\CustomPacketSendEvent;
+use ifteam\CustomPacket\CPAPI;
 
 class SocketInterface{
     
@@ -33,8 +34,8 @@ class SocketInterface{
     
     public function handlePacket(){
         if(($packet = $this->readMainQueue()) instanceof DataPacket){
-            Server::getInstance()->getPluginManager()->callEvent($ev = new CustomPacketPreReceiveEvent(clone $packet));
-            if(!$ev->isCancelled()) Server::getInstance()->getPluginManager()->callEvent($ev = new CustomPacketReceiveEvent(clone $packet));
+            Server::getInstance()->getPluginManager()->callEvent($ev = new CustomPacketPreReceiveEvent(clone $packet, $player));
+            if(!$ev->isCancelled()) Server::getInstance()->getPluginManager()->callEvent($ev = new CustomPacketReceiveEvent(clone $packet, $player));
             return true;
         }
         
@@ -46,7 +47,8 @@ class SocketInterface{
     }
     
     public function sendPacket(DataPacket $packet){
-        Server::getInstance()->getPluginManager()->callEvent($ev = new CustomPacketSendEvent($packet));
+        if(($player = CPAPI::matchPlayer($packet->address)) === null) return false;
+        Server::getInstance()->getPluginManager()->callEvent($ev = new CustomPacketSendEvent($packet, $player));
         if(!$ev->isCancelled()) $this->pushInternalQueue([Info::PACKET_SEND, $packet]);
     }
     

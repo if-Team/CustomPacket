@@ -16,8 +16,8 @@ class MainLoader extends PluginBase {
         $this->getServer()->getLogger()->info("[CustomPacket] Registered CustomSocket tick schedule.");
     }
     
-    public static function sendPacket(DataPacket $packet){
-        self::$interface->sendPacket($packet);
+    public static function getInterface(){
+        return self::$interface;
     }
     
 }

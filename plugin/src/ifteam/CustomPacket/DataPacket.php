@@ -7,7 +7,7 @@ use pocketmine\utils\Utils;
 
 class DataPacket{ //Note: need to be abstract in future
     
-    public  $address, $port, $data;
+    public $address, $port, $data;
     
     public function __construct($address, $port, $data){
         $this->address = $address;
