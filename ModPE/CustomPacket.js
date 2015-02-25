@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * @author ChalkPE
+ * @author ChalkPE <amato17@naver.com>
  * @since 2014-11-03
  * @see https://github.com/if-Team/CustomPacket
  */
@@ -64,8 +64,12 @@ try{
     channel = java.nio.channels.DatagramChannel.open();
     decoder = java.nio.charset.Charset.forName("UTF-8").newDecoder();
     buffer = java.nio.ByteBuffer.allocateDirect(65507);
-    
-    var scripts = net.zhuoweizhang.mcpelauncher.ScriptManager.scripts;
+}catch(e){
+    print(e.name + " - " + e.message);
+}
+
+function selectLevelHook(){
+	var scripts = net.zhuoweizhang.mcpelauncher.ScriptManager.scripts;
     var ScriptableObject = org.mozilla.javascript.ScriptableObject;
     
 	for(var i = 0; i < scripts.size(); i++) {
@@ -74,6 +78,4 @@ try{
 			ScriptableObject.putProperty(scope, "CustomPacket", CustomPacket);
 		}
 	}
-}catch(e){
-    print(e.name + " - " + e.message);
 }
