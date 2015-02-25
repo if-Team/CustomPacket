@@ -14,9 +14,9 @@ var buffer = null;
 
 /**
  * @brief  서버에 연결합니다
- * @param  address {string} 서버의 IP
- * @param  message {string} 서버로 보내는 문자열
- * @param  callback {function} 서버가 응답한 내용을 전달받을 콜백 객체
+ * @param  address {String} 서버의 IP
+ * @param  message {String} 서버로 보내는 문자열
+ * @param  callback {function} 응답을 받을 콜백 메서드 (String 또는 Error)
  * @return 없음
  */
 CustomPacket.get = function get(address, message, callback){
@@ -43,7 +43,7 @@ CustomPacket.get = function get(address, message, callback){
         	}
         	
             var src = java.nio.ByteBuffer.wrap(new java.lang.String(message).getBytes("UTF-8"));
-            channel.send(src, new java.net.InetSocketAddress(address, PORT));
+            channel.send(src, new java.net.InetSocketAddress(address, CustomPacket.PORT));
             
             channel.receive(buffer);
             
@@ -51,9 +51,13 @@ CustomPacket.get = function get(address, message, callback){
             var received = decoder.decode(buffer).toString() + "";
             buffer.clear();
             
-            callback(received);
-        }catch(e){
-        	callback(null);
+            try{
+            	callback(received);
+            }catch(e){}
+        }catch(error){
+        	try{
+        		callback(error);
+            }catch(e){}
         }
     }}).start();
 }
@@ -72,10 +76,17 @@ function selectLevelHook(){
 	var scripts = net.zhuoweizhang.mcpelauncher.ScriptManager.scripts;
     var ScriptableObject = org.mozilla.javascript.ScriptableObject;
     
+    var loaded = false;
+    
 	for(var i = 0; i < scripts.size(); i++) {
 		var scope = scripts.get(i).scope;
 		if(!ScriptableObject.hasProperty(scope, "CustomPacket")){
 			ScriptableObject.putProperty(scope, "CustomPacket", CustomPacket);
+			loaded = true;
 		}
+	}
+	
+	if(loaded){
+		print("CustomPacket has been loaded!");
 	}
 }
