@@ -34,6 +34,11 @@ class SocketInterface{
     
     public function handlePacket(){
         if(($packet = $this->readMainQueue()) instanceof DataPacket){
+            if(($player = CPAPI::matchPlayer($packet->address)) === null){
+                $this->server->getLogger()->warning("[CustomPacket] Invalid packet from unconnected client $packet->address");
+                $packet->printDump();
+                return true;
+            }
             Server::getInstance()->getPluginManager()->callEvent($ev = new CustomPacketPreReceiveEvent(clone $packet, $player));
             if(!$ev->isCancelled()) Server::getInstance()->getPluginManager()->callEvent($ev = new CustomPacketReceiveEvent(clone $packet, $player));
             return true;
