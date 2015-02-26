@@ -6,10 +6,10 @@
  * @see https://github.com/if-Team/CustomPacket
  */
 
-const HEARTBEAT_SECONDS = 2;
-const HEARTBEAT_SIGNAL = String.fromCharCode(16);
 var CustomPacket = {};
 CustomPacket.PORT = 19131;
+CustomPacket.HEARTBEAT_SECONDS = 2;
+CustomPacket.HEARTBEAT_SIGNAL = String.fromCharCode(16);
 
 var channel = null;
 var decoder = null;
@@ -69,14 +69,15 @@ CustomPacket.registerRefreshHook = function(address, callback){
     try{
         new java.lang.Thread({run: function(){
             while(Server.getAddress() !== null){
-                CustomPacket.get(address, HEARTBEAT_SIGNAL, callback);
-                java.lang.Thread.sleep(HEARTBEAT_SECONDS * 1000);
+                CustomPacket.get(address, CustomPacket.HEARTBEAT_SIGNAL, callback);
+                java.lang.Thread.sleep(CustomPacket.HEARTBEAT_SECONDS * 1000);
             }
         }}).start();
-    } catch(e){
+    }catch(e){
         print(e);
     }
-}
+};
+
 try{
 	Object.freeze(CustomPacket);
 	
