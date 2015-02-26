@@ -9,7 +9,7 @@ require("DataPacket.php");
 
 class CustomSocket extends \Thread{
     
-    protected $internalQueue, $externalQueue, $logger, $port, $interface, $shutdown, $socket, $lastmeasure;
+    protected $internalQueue, $externalQueue, $logger, $port, $interface, $shutdown, $socket, $lastmeasure, $banlist;
     
     public function __construct(\Threaded $internalThread, \Threaded $externalThread, \ThreadedLogger $logger, $port, $interface = "0.0.0.0"){
         $this->internalQueue = $internalThread; //Used to contain internal signals
@@ -20,22 +20,7 @@ class CustomSocket extends \Thread{
         $this->shutdown = false;
         $this->logInfo("Initialization compelete. Starting thread...");
         $this->start();
-    }
-    
-    public function pushMainQueue(DataPacket $packet){
-        $this->externalQueue[] = $packet;
-    }
-    
-    public function readMainQueue(){
-        return $this->externalQueue->shift();
-    }
-    
-    public function pushInternalQueue(array $buffer){
-        $this->internalQueue[] = $buffer;
-    }
-    
-    public function readInternalQueue(){
-        return $this->internalQueue->shift();
+        $this->banlist = [];
     }
     
     public function logInfo($str){
@@ -52,7 +37,8 @@ class CustomSocket extends \Thread{
         while(!$this->shutdown and $timeout >= 0){
             $address = $port = $buffer = null;
             if(@socket_recvfrom($this->socket, $buffer, 65535, 0, $address, $port) > 0){
-                $this->pushMainQueue(new DataPacket($address, $port, $buffer));
+                isset($this->banlist[(string) $address]) ? $this->loginfo((int) $this->banlist[$address].' ' .time()):false;
+                if(!isset($this->banlist[$address]) or (int) $this->banlist[$address] < time()) $this->pushMainQueue(new DataPacket($address, $port, $buffer));
             }
             $timeout = $this->lastmeasure - microtime(true);
         }
@@ -83,6 +69,14 @@ class CustomSocket extends \Thread{
                         $this->shutdown = true;
                         break;
                         
+                    case Info::SIGNAL_BLOCK:
+                        $this->blockAddress($buffer[1][0], $buffer[1][1]);
+                        break;
+                    
+                    case Info::SIGNAL_UNBLOCK:
+                        $this->unblockAddress($buffer[1]);
+                        break;
+                        
                     case Info::SIGNAL_TICK:
                         $this->doTick();
                         break;
@@ -90,6 +84,9 @@ class CustomSocket extends \Thread{
                     case Info::PACKET_SEND:
                         socket_sendto($this->socket, $buffer[1]->data, 1024*1024, 0, $buffer[1]->address, $buffer[1]->port);
                         break;
+                        
+                    default:
+                        $this->loginfo("Unexpected signal: ". ord($buffer[0]{0}));
                 }
             }
         }
@@ -97,8 +94,36 @@ class CustomSocket extends \Thread{
         @socket_close($this->socket);
     }
     
+    public function blockAddress($address, $time){
+        $this->banlist[(string) $address] = $time;
+        $this->loginfo($time . ' is for the ban');
+        echo time()."\n";
+        $this->loginfo("Blocked ".$address." for ". ((int) $time - time()) ." seconds");
+    }
+    
+    public function unblockAddress($address){
+        if(isset($this->banlist[$address])) unset($this->banlist[$address]);
+        $this->loginfo("Unblocked ".$address);
+    }
+    
     public function shutdown(){
         $this->pushInternalQueue([chr(Info::SIGNAL_SHUTDOWN)]);
+    }
+    
+    public function pushMainQueue(DataPacket $packet){
+        $this->externalQueue[] = $packet;
+    }
+    
+    public function readMainQueue(){
+        return $this->externalQueue->shift();
+    }
+    
+    public function pushInternalQueue(array $buffer){
+        $this->internalQueue[] = $buffer;
+    }
+    
+    public function readInternalQueue(){
+        return $this->internalQueue->shift();
     }
     
 }

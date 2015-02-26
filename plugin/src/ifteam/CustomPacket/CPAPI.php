@@ -19,4 +19,12 @@ class CPAPI{
         return null;
     }
     
+    public static function blockAddress($address, $seconds){
+        MainLoader::getInterface()->blockAddress($address, $seconds);
+    }
+    
+    public static function unblockAddress($address){
+        MainLoader::getInterface()->unblockAddress($address);
+    }
+    
 }
