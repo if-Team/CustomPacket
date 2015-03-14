@@ -48,8 +48,11 @@ class SocketInterface{
                 $player = $this->server->getPlayerExact(self::$ipCache[$packet->address]['username']);
             }
             if($player === null){
+                /*
                 $this->server->getLogger()->warning("[CustomPacket] Invalid packet from unconnected client $packet->address");
                 $packet->printDump();
+                */ //TODO: Add option for auto-banning unrecognized clients
+                
                 /*
                 $this->server->getLogger()->notice("[CustomPacket] Blocking address $packet->address for ".self::BLOCK_TIME_SECONDS." seconds");
                 CPAPI::blockAddress($packet->address, (int) self::BLOCK_TIME_SECONDS);
