@@ -14,17 +14,16 @@ class SocketInterface{
     private $externalThreaded;
     private $server;
     private $socket;
-    private static $ipCache;
     
     const CACHE_VALID_TIME_LIMIT = 1800;
     const BLOCK_TIME_SECONDS = 600;
     
-    public function __construct(Server $server){
+    public function __construct(Server $server, $port){
         self::$ipCache = [];
         $this->internalThreaded = new \Threaded();
         $this->externalThreaded = new \Threaded();
         $this->server = $server;
-        $this->socket = new CustomSocket($this->internalThreaded, $this->externalThreaded, $this->server->getLogger(), 19131, $this->server->getIp() === "" ? "0.0.0.0" : $this->server->getIp());
+        $this->socket = new CustomSocket($this->internalThreaded, $this->externalThreaded, $this->server->getLogger(), $port, $this->server->getIp() === "" ? "0.0.0.0" : $this->server->getIp());
     }
     
     public function process(){
@@ -38,34 +37,9 @@ class SocketInterface{
     }
     
     public function handlePacket(){
-        if(($packet = $this->readMainQueue()) instanceof DataPacket){
-            if(!isset(self::$ipCache[$packet->address])){
-                $player = CPAPI::matchPlayer($packet->address);
-            } elseif(self::$ipCache[$packet->address]['expirirationTime'] <= time()){
-                unset(self::$ipCache[$packet->address]); //Expired!
-                $player = CPAPI::matchPlayer($packet->address);
-            } else {
-                $player = $this->server->getPlayerExact(self::$ipCache[$packet->address]['username']);
-            }
-            if($player === null){
-                /*
-                $this->server->getLogger()->warning("[CustomPacket] Invalid packet from unconnected client $packet->address");
-                $packet->printDump();
-                */ //TODO: Add option for auto-banning unrecognized clients
-                
-                /*
-                $this->server->getLogger()->notice("[CustomPacket] Blocking address $packet->address for ".self::BLOCK_TIME_SECONDS." seconds");
-                CPAPI::blockAddress($packet->address, (int) self::BLOCK_TIME_SECONDS);
-                */
-                return true;
-            }
-            self::$ipCache[$packet->address] = ['username' => $player, 'expirirationTime' => (int) (time() + self::CACHE_VALID_TIME_LIMIT)];
-            Server::getInstance()->getPluginManager()->callEvent($ev = new CustomPacketPreReceiveEvent(clone $packet, $player));
-            if(!$ev->isCancelled()) Server::getInstance()->getPluginManager()->callEvent($ev = new CustomPacketReceiveEvent(clone $packet, $player));
-            return true;
-        }
-        
-        return false;
+       	Server::getInstance()->getPluginManager()->callEvent($ev = new CustomPacketPreReceiveEvent(clone $packet));
+        if(!$ev->isCancelled()) Server::getInstance()->getPluginManager()->callEvent($ev = new CustomPacketReceiveEvent(clone $packet));
+        return true;
     }
     
     public function shutdown(){
@@ -73,8 +47,7 @@ class SocketInterface{
     }
     
     public function sendPacket(DataPacket $packet){
-        if(($player = CPAPI::matchPlayer($packet->address)) === null) return false;
-        Server::getInstance()->getPluginManager()->callEvent($ev = new CustomPacketSendEvent($packet, $player));
+        Server::getInstance()->getPluginManager()->callEvent($ev = new CustomPacketSendEvent($packet));
         if(!$ev->isCancelled()) $this->pushInternalQueue([chr(Info::PACKET_SEND), $packet]);
     }
     

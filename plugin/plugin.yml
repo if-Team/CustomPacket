@@ -1,6 +1,15 @@
 name: CustomPacket
 main: ifteam\CustomPacket\MainLoader
 author: ifteam
-version: Alpha_1.1
+version: Alpha_1.2
 load: STARTUP
-api: [1.8.0]
+api: [1.12.0]
+
+commands:
+ custompacket:
+  description: "Change the Custom Packet port"
+  usage: "/custompacket <port>"
+  permission: custompacket.portchange
+permissions:
+ custompacket.portchange:
+  default: op
