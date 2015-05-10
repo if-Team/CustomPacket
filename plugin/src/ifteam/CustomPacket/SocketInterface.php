@@ -6,7 +6,6 @@ use pocketmine\Server;
 use ifteam\CustomPacket\event\CustomPacketPreReceiveEvent;
 use ifteam\CustomPacket\event\CustomPacketReceiveEvent;
 use ifteam\CustomPacket\event\CustomPacketSendEvent;
-use ifteam\CustomPacket\CPAPI;
 
 class SocketInterface{
     

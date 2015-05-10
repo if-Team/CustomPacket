@@ -2,8 +2,6 @@
 
 namespace ifteam\CustomPacket;
 
-use ifteam\CustomPacket\Info;
-
 require("Info.php");
 require("DataPacket.php");
 

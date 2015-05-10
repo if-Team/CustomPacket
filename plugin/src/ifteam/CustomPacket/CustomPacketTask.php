@@ -3,6 +3,7 @@
 namespace ifteam\CustomPacket;
 
 use pocketmine\scheduler\PluginTask;
+
 class CustomPacketTask extends PluginTask {
 	function __construct(MainLoader $owner) {
 		parent::__construct ( $owner );
