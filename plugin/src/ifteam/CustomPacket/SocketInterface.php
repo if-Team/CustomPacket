@@ -18,7 +18,6 @@ class SocketInterface{
     const BLOCK_TIME_SECONDS = 600;
     
     public function __construct(Server $server, $port){
-        self::$ipCache = [];
         $this->internalThreaded = new \Threaded();
         $this->externalThreaded = new \Threaded();
         $this->server = $server;
@@ -36,9 +35,12 @@ class SocketInterface{
     }
     
     public function handlePacket(){
-       	Server::getInstance()->getPluginManager()->callEvent($ev = new CustomPacketPreReceiveEvent(clone $packet));
-        if(!$ev->isCancelled()) Server::getInstance()->getPluginManager()->callEvent($ev = new CustomPacketReceiveEvent(clone $packet));
-        return true;
+    	if(($packet = $this->readMainQueue()) instanceof DataPacket){
+    		Server::getInstance()->getPluginManager()->callEvent($ev = new CustomPacketPreReceiveEvent(clone $packet));
+    		if(!$ev->isCancelled()) Server::getInstance()->getPluginManager()->callEvent($ev = new CustomPacketReceiveEvent(clone $packet));
+    		return true;
+    	}
+    	return false;
     }
     
     public function shutdown(){
