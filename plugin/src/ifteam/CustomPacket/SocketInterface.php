@@ -17,11 +17,11 @@ class SocketInterface{
     const CACHE_VALID_TIME_LIMIT = 1800;
     const BLOCK_TIME_SECONDS = 600;
     
-    public function __construct(Server $server, $port){
+    public function __construct(Server $server, $port, $secure){
         $this->internalThreaded = new \Threaded();
         $this->externalThreaded = new \Threaded();
         $this->server = $server;
-        $this->socket = new CustomSocket($this->internalThreaded, $this->externalThreaded, $this->server->getLogger(), $port, $this->server->getIp() === "" ? "0.0.0.0" : $this->server->getIp());
+        $this->socket = new CustomSocket($this->internalThreaded, $this->externalThreaded, $this->server->getLogger(), $port, $this->server->getIp() === "" ? "0.0.0.0" : $this->server->getIp(), $secure);
     }
     
     public function process(){
