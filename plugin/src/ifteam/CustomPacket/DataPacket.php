@@ -12,11 +12,11 @@ class DataPacket{ //Note: need to be abstract in future
     public function __construct($address, $port, $data){
         $this->address = $address;
         $this->port = $port;
-        $this->data = $data;
+        $this->data = $this->pid().$data;
     }
     
     public function pid(){
-        return $this->data{0};
+        return Info::PKHEAD_DATA;
     }
     
     public function printDump(){
@@ -25,11 +25,12 @@ class DataPacket{ //Note: need to be abstract in future
         $logger->info("");
         $logger->info("Source address: ". $this->address);
         $logger->info("Source port:    ". $this->port);
-        $logger->info("Packet length:  ". strlen($this->data));
+        $logger->info("Packet length:  ". strlen($this->data) - 1);
+        $logger->info("Packet header:  ". ord($this->pid()))
         $logger->info("");
         $logger->info("Printing hexdump");
         $logger->info(str_repeat("=", 73));
-        $dump = Utils::hexdump($this->data);
+        $dump = Utils::hexdump(substr($this->data, 1));
         foreach(explode("\n", substr($dump, 0, strlen($dump) - 1)) as $line) $logger->info($line);
         $logger->info(str_repeat("=", 73));
         $logger->info("");

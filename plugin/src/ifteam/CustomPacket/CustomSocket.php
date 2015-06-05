@@ -4,6 +4,9 @@ namespace ifteam\CustomPacket;
 
 require("Info.php");
 require("DataPacket.php");
+require("template/Base64Packet.php");
+require("template/EnumPacket.php");
+require("template/InvalidPacket.php");
 
 class CustomSocket extends \Thread{
     
@@ -36,7 +39,23 @@ class CustomSocket extends \Thread{
             $address = $port = $buffer = null;
             if(@socket_recvfrom($this->socket, $buffer, 65535, 0, $address, $port) > 0){
                 isset($this->banlist[(string) $address]) ? $this->loginfo((int) $this->banlist[$address].' ' .time()):false;
-                if(!isset($this->banlist[$address]) or (int) $this->banlist[$address] < time()) $this->pushMainQueue(new DataPacket($address, $port, $buffer));
+                if(!isset($this->banlist[$address]) or (int) $this->banlist[$address] < time()){
+                    switch($buffer{0}){
+                        case Info::PKHEAD_DATA:
+                            $this->pushMainQueue(new DataPacket($address, $port, $buffer));
+                            break;
+                        case Info::PKHEAD_BASE64:
+                            $this->pushMainQueue(new Base64Packet($address, $port, $buffer));
+                            break;
+                        case Info::PKHEAD_ENUM:
+                            $this->pushMainQueue(new EnumPacket($address, $port, $buffer));
+                            break;
+                        default:
+                            $this->pushMainQueue($pk - new InvalidPacket($address, $port, $buffer));
+                            $this->logInfo("Custompacket received packet with invalid header! Printing dump...");
+                            $pk->printDump();
+                    }
+                }
             }
             $timeout = $this->lastmeasure - microtime(true);
         }
