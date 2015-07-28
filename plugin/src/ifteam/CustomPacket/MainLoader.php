@@ -21,6 +21,10 @@ class MainLoader extends PluginBase implements Listener {
 		$this->getLogger()->info("Registered CustomSocket tick schedule.");
 	}
 
+	public function onDisable(){
+		foreach(CPAPI::getHaltTasks() as $task) $task[0]($task[1]);
+	}
+
 	public function onCommand(CommandSender $sender,Command $command, $label, Array $args){
 		if(!$sender->isOp()){
 			return false;
