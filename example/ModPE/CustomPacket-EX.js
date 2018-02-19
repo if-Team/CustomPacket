@@ -21,7 +21,7 @@ function procCmd(str){
 				return;
 			}
 			
-			clientMessage("Server response: " + retval);
+			clientMessage("Server response: " + response);
 		});
 		
 		clientMessage("Sending to server: " + command);
